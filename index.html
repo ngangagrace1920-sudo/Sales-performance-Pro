@@ -17,13 +17,10 @@ body.light{background:#f5f5f7;color:#111;}
 body.dark .card{background:rgba(10,30,80,0.9);border:1px solid rgba(255,255,255,0.08);box-shadow:0 10px 30px rgba(0,0,0,0.5);backdrop-filter: blur(15px);}
 body.light .card{background:white;box-shadow:0 8px 25px rgba(0,0,0,0.08);}
 input,button,select{width:100%;padding:14px;margin-top:10px;border-radius:14px;border:none;font-size:15px;}
-body.dark input{background:#0b1d3a;color:white;border:1px solid #0b5ed7;}
-body.light input{background:#f1f5f9;color:#111;}
-button{background:linear-gradient(135deg,#1e3a8a,#0b5ed7);color:white;font-weight:bold;cursor:pointer;transition:0.3s;}
-button:hover{transform:scale(1.03);}
+body.dark input,body.dark select{background:#0b1d3a;color:white;border:1px solid #0b5ed7;}
+body.light input,body.light select{background:#f1f5f9;color:#111;}
+button{background:linear-gradient(135deg,#1e3a8a,#0b5ed7);color:white;font-weight:bold;cursor:pointer;}
 .delete-btn{background:#d9534f !important;}
-.money{color:#facc15;font-weight:bold;}
-.date-pop{color:#38bdf8;}
 canvas{border-radius:18px;padding:12px;background:rgba(255,255,255,0.04);}
 .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1000;}
 .modal-content{background:white;color:#111;padding:20px;border-radius:15px;max-width:400px;width:90%;}
@@ -31,345 +28,389 @@ body.dark .modal-content{background:#0b1d3a;color:white;}
 h2,h3{text-align:center;}
 </style>
 </head>
+
 <body class="dark">
 
 <div class="container">
 
-  <!-- LOGIN -->
-  <div class="card" id="loginCard">
-    <h2>Sales Performance Pro</h2>
-    <input type="email" id="userEmail" placeholder="Enter Email">
-    <button onclick="login()">Login</button>
-  </div>
-
-  <div id="mainApp" style="display:none">
-
-    <button onclick="switchMode()">Light / Dark Mode</button>
-
-    <!-- SHOP -->
-    <div class="card">
-      <h3>Shop Management</h3>
-      <input id="shopName" placeholder="Shop Name">
-      <button onclick="addShop()">Add Shop</button>
-      <select id="shopSelect" onchange="switchShop()"></select>
-      <button class="delete-btn" onclick="deleteShop()">Delete Shop</button>
-    </div>
-
-    <!-- DAILY ENTRY -->
-    <div class="card">
-      <h3>Daily Entry</h3>
-      <input type="date" id="date">
-      <input type="time" id="timeIn">
-      <input type="time" id="timeOut">
-      <input type="number" id="sales" placeholder="Sales">
-      <input type="number" id="expenses" placeholder="Expenses">
-      <button onclick="addRecord()">Save Record</button>
-
-      <!-- DAILY RECORDS COLLAPSIBLE -->
-      <details style="margin-top:15px;">
-        <summary>View Daily Records</summary>
-        <div id="records" style="margin-top:10px;"></div>
-      </details>
-    </div>
-
-    <!-- SUMMARY -->
-    <div class="card">
-      <h3>Business Summary</h3>
-      <button onclick="showSummary()">View Summary</button>
-      <button onclick="showTrendWarning()">Profit Trend Warning</button>
-      <button onclick="showRanking()">Shop Ranking</button>
-      <button onclick="shareWhatsApp()">Share WhatsApp</button>
-      <button onclick="downloadPDF()">Download PDF</button>
-    </div>
-
-    <!-- PRODUCTIVITY -->
-    <div class="card">
-      <h3>Productivity</h3>
-      <p id="productivity"></p>
-    </div>
-
-    <!-- GROWTH CHART -->
-    <div class="card">
-      <h3>Growth Chart</h3>
-      <canvas id="chart"></canvas>
-    </div>
-
-    <!-- BACKUP -->
-    <div class="card">
-      <h3>Backup & Restore</h3>
-      <button onclick="backupData()">Backup Data</button>
-      <input type="file" onchange="restoreData(event)">
-    </div>
-
-  </div>
+<div class="card" id="loginCard">
+<h2>Sales Performance Pro</h2>
+<input type="email" id="userEmail" placeholder="Enter Email">
+<button onclick="login()">Login</button>
 </div>
 
-<!-- MODALS -->
+<div id="mainApp" style="display:none">
+
+<button onclick="switchMode()">Light / Dark Mode</button>
+
+<!-- SHOP MANAGEMENT -->
+<div class="card">
+<h3>Shop Management</h3>
+
+<input id="shopName" placeholder="Shop Name">
+
+<select id="currencySelect">
+<option value="Ksh">KES - Kenyan Shilling</option>
+<option value="$">USD - US Dollar</option>
+<option value="€">EUR - Euro</option>
+<option value="£">GBP - British Pound</option>
+<option value="₹">INR - Indian Rupee</option>
+<option value="₦">NGN - Nigerian Naira</option>
+<option value="R">ZAR - South African Rand</option>
+</select>
+
+<button onclick="addShop()">Add Shop</button>
+
+<select id="shopSelect" onchange="switchShop()"></select>
+
+<button class="delete-btn" onclick="deleteShop()">Delete Shop</button>
+
+</div>
+
+<!-- DAILY ENTRY -->
+<div class="card">
+<h3>Daily Entry</h3>
+
+<input type="date" id="date">
+<input type="time" id="timeIn">
+<input type="time" id="timeOut">
+<input type="number" id="sales" placeholder="Sales">
+<input type="number" id="expenses" placeholder="Expenses">
+
+<button onclick="addRecord()">Save Record</button>
+
+<details style="margin-top:15px;">
+<summary>View Daily Records</summary>
+<div id="records"></div>
+</details>
+
+</div>
+
+<!-- SUMMARY -->
+<div class="card">
+<h3>Business Summary</h3>
+<button onclick="showSummary()">View Summary</button>
+<button onclick="shareWhatsApp()">Share WhatsApp</button>
+<button onclick="downloadPDF()">Download PDF</button>
+</div>
+
+<!-- PRODUCTIVITY -->
+<div class="card">
+<h3>Productivity</h3>
+<p id="productivity"></p>
+</div>
+
+<!-- CHART -->
+<div class="card">
+<h3>Growth Chart</h3>
+<canvas id="chart"></canvas>
+</div>
+
+</div>
+</div>
+
 <div id="summaryModal" class="modal">
-  <div class="modal-content">
-    <h2>Business Summary</h2>
-    <p id="summaryContent"></p>
-    <button onclick="closeSummary()">Close</button>
-  </div>
+<div class="modal-content">
+<h2>Business Summary</h2>
+<p id="summaryContent"></p>
+<button onclick="closeSummary()">Close</button>
 </div>
-
-<div id="trendModal" class="modal">
-  <div class="modal-content">
-    <h2>Profit Trend</h2>
-    <p id="trendContent"></p>
-    <button onclick="closeTrend()">Close</button>
-  </div>
 </div>
-
-<div id="rankingModal" class="modal">
-  <div class="modal-content">
-    <h2>Shop Ranking</h2>
-    <div id="rankingContent"></div>
-    <button onclick="closeRanking()">Close</button>
-  </div>
-</div>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* FIREBASE */
-const firebaseConfig={apiKey:"AIzaSyAcEZJRnHX77pQStqSL4Rm7DdpXjgudya4",authDomain:"sales-performance-pro.firebaseapp.com",projectId:"sales-performance-pro",storageBucket:"sales-performance-pro.appspot.com"};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
 
 /* STATE */
-let currentUserEmail=null;
-let shops=JSON.parse(localStorage.getItem("sales_pro_pro"))||[];
-let currentShop=null;
-let chart=null;
+
+let currentUserEmail=null
+let shops=JSON.parse(localStorage.getItem("sales_pro_pro"))||[]
+let currentShop=null
+let chart=null
 
 /* LOGIN */
+
 function login(){
-  let email=document.getElementById("userEmail").value.trim();
-  if(!email) return alert("Enter email");
-  currentUserEmail=email;
-  document.getElementById("loginCard").style.display="none";
-  document.getElementById("mainApp").style.display="block";
-  loadShops();
-  cloudSync();
+
+let email=document.getElementById("userEmail").value.trim()
+
+if(!email) return alert("Enter email")
+
+currentUserEmail=email
+
+document.getElementById("loginCard").style.display="none"
+document.getElementById("mainApp").style.display="block"
+
+loadShops()
+
 }
 
 /* MODE */
+
 function switchMode(){
-  document.body.classList.toggle("light");
-  document.body.classList.toggle("dark");
+document.body.classList.toggle("light")
+document.body.classList.toggle("dark")
 }
 
 /* STORAGE */
+
 function saveLocal(){
-  localStorage.setItem("sales_pro_pro",JSON.stringify(shops));
+localStorage.setItem("sales_pro_pro",JSON.stringify(shops))
 }
 
 /* SHOP */
+
 function addShop(){
-  let name=document.getElementById("shopName").value.trim();
-  if(!name) return;
-  shops.push({id:Date.now(),name:name,records:[]});
-  saveLocal();
-  loadShops();
+
+let name=document.getElementById("shopName").value.trim()
+let currency=document.getElementById("currencySelect").value
+
+if(!name) return
+
+shops.push({
+id:Date.now(),
+name:name,
+currency:currency,
+records:[]
+})
+
+saveLocal()
+
+loadShops()
+
 }
+
 function deleteShop(){
-  if(!currentShop) return;
-  if(!confirm("Delete shop?")) return;
-  shops=shops.filter(s=>s.id!==currentShop);
-  currentShop=shops.length?shops[0].id:null;
-  saveLocal();
-  loadShops();
+
+if(!currentShop) return
+
+if(!confirm("Delete shop?")) return
+
+shops=shops.filter(s=>s.id!==currentShop)
+
+currentShop=shops.length?shops[0].id:null
+
+saveLocal()
+
+loadShops()
+
 }
+
 function loadShops(){
-  let select=document.getElementById("shopSelect");
-  select.innerHTML="";
-  shops.forEach(s=>{
-    let opt=document.createElement("option");
-    opt.value=s.id;
-    opt.textContent=s.name;
-    select.appendChild(opt);
-  });
-  if(shops.length) currentShop=shops[0].id;
-  renderDashboard();
+
+let select=document.getElementById("shopSelect")
+
+select.innerHTML=""
+
+shops.forEach(s=>{
+
+let opt=document.createElement("option")
+
+opt.value=s.id
+
+opt.textContent=s.name
+
+select.appendChild(opt)
+
+})
+
+if(shops.length) currentShop=shops[0].id
+
+renderDashboard()
+
 }
+
 function switchShop(){
-  currentShop=Number(document.getElementById("shopSelect").value);
-  renderDashboard();
+
+currentShop=Number(document.getElementById("shopSelect").value)
+
+renderDashboard()
+
 }
 
 /* RECORDS */
+
 function addRecord(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop) return;
-  let date=document.getElementById("date").value;
-  let timeIn=document.getElementById("timeIn").value;
-  let timeOut=document.getElementById("timeOut").value;
-  let sales=Number(document.getElementById("sales").value);
-  let expenses=Number(document.getElementById("expenses").value);
-  if(!date||!timeIn||!timeOut) return alert("Fill all fields");
-  let profit=sales-expenses;
-  shop.records.push({date,timeIn,timeOut,sales,expenses,profit});
-  saveLocal();
-  renderDashboard();
-  document.querySelectorAll("#date,#timeIn,#timeOut,#sales,#expenses").forEach(e=>e.value="");
+
+let shop=shops.find(s=>s.id==currentShop)
+
+if(!shop) return
+
+let date=document.getElementById("date").value
+let timeIn=document.getElementById("timeIn").value
+let timeOut=document.getElementById("timeOut").value
+let sales=Number(document.getElementById("sales").value)
+let expenses=Number(document.getElementById("expenses").value)
+
+if(!date||!timeIn||!timeOut) return alert("Fill all fields")
+
+let profit=sales-expenses
+
+shop.records.push({date,timeIn,timeOut,sales,expenses,profit})
+
+saveLocal()
+
+renderDashboard()
+
+document.querySelectorAll("#date,#timeIn,#timeOut,#sales,#expenses").forEach(e=>e.value="")
+
 }
+
 function deleteRecord(index){
-  let shop=shops.find(s=>s.id==currentShop);
-  shop.records.splice(index,1);
-  saveLocal();
-  renderDashboard();
+
+let shop=shops.find(s=>s.id==currentShop)
+
+shop.records.splice(index,1)
+
+saveLocal()
+
+renderDashboard()
+
 }
 
 /* DASHBOARD */
+
 function renderDashboard(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop) return;
 
-  /* PRODUCTIVITY */
-  let uniqueDays=new Set(shop.records.map(r=>r.date));
-  document.getElementById("productivity").innerHTML="Days Worked: "+uniqueDays.size;
+let shop=shops.find(s=>s.id==currentShop)
 
-  /* DAILY RECORDS WITH PROFIT ALLOCATION */
-  let html="";
-  shop.records.forEach((r,i)=>{
-    html+=`<div><span class="date-pop">${r.date}</span><br>
-           Sales: Ksh ${r.sales}<br>
-           Profit: Ksh ${r.profit}<br>
-           Owner 40%: ${(r.profit*0.4).toFixed(2)}<br>
-           Capital 30%: ${(r.profit*0.3).toFixed(2)}<br>
-           Savings 20%: ${(r.profit*0.2).toFixed(2)}<br>
-           Emergency 10%: ${(r.profit*0.1).toFixed(2)}<br>
-           <button class="delete-btn" onclick="deleteRecord(${i})">Delete</button>
-           <hr></div>`;
-  });
-  document.getElementById("records").innerHTML=html;
+if(!shop) return
 
-  /* CHART */
-  let ctx=document.getElementById("chart").getContext("2d");
-  if(chart) chart.destroy();
-  chart=new Chart(ctx,{
-    type:"line",
-    data:{
-      labels:shop.records.map(r=>r.date),
-      datasets:[{label:"Sales Growth",data:shop.records.map(r=>r.sales),borderColor:"#0b5ed7",tension:0.4}]
-    }
-  });
+let currency=shop.currency
 
-  /* BACKGROUND INTELLIGENCE */
-  generateSummaryBackground();
-  generateTrendBackground();
-  generateRankingBackground();
+let uniqueDays=new Set(shop.records.map(r=>r.date))
+
+document.getElementById("productivity").innerHTML="Days Worked: "+uniqueDays.size
+
+let html=""
+
+shop.records.forEach((r,i)=>{
+
+html+=`<div>
+
+<b>${r.date}</b><br>
+
+Sales: ${currency} ${r.sales}<br>
+Profit: ${currency} ${r.profit}<br><br>
+
+Owner 40%: ${currency} ${(r.profit*0.4).toFixed(2)}<br>
+Capital 30%: ${currency} ${(r.profit*0.3).toFixed(2)}<br>
+Savings 20%: ${currency} ${(r.profit*0.2).toFixed(2)}<br>
+Emergency 10%: ${currency} ${(r.profit*0.1).toFixed(2)}<br>
+
+<button class="delete-btn" onclick="deleteRecord(${i})">Delete</button>
+
+<hr>
+
+</div>`
+
+})
+
+document.getElementById("records").innerHTML=html
+
+/* CHART */
+
+let ctx=document.getElementById("chart").getContext("2d")
+
+if(chart) chart.destroy()
+
+chart=new Chart(ctx,{
+type:"line",
+data:{
+labels:shop.records.map(r=>r.date),
+datasets:[{
+label:"Sales",
+data:shop.records.map(r=>r.sales),
+borderColor:"#0b5ed7",
+tension:0.4
+}]
+}
+})
+
+generateSummary()
+
 }
 
-/* SUMMARY - ALL TIME */
-function generateSummaryBackground(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop) return;
-  let totalSales=0,totalProfit=0;
-  shop.records.forEach(r=>{totalSales+=r.sales||0; totalProfit+=r.profit||0;});
-  window.summaryCache=
-    "Total Sales: Ksh "+totalSales+"<br>"+
-    "Total Profit: Ksh "+totalProfit+"<br><br>"+
-    (shop.records.length>0?
-      "Owner 40%: "+(totalProfit*0.4).toFixed(2)+"<br>"+
-      "Capital 30%: "+(totalProfit*0.3).toFixed(2)+"<br>"+
-      "Savings 20%: "+(totalProfit*0.2).toFixed(2)+"<br>"+
-      "Emergency 10%: "+(totalProfit*0.1).toFixed(2)
-      :"No records for this shop");
-}
-function showSummary(){document.getElementById("summaryContent").innerHTML=window.summaryCache;document.getElementById("summaryModal").style.display="flex";}
-function closeSummary(){document.getElementById("summaryModal").style.display="none";}
+/* SUMMARY */
 
-/* SHARE WHATSAPP */
+function generateSummary(){
+
+let shop=shops.find(s=>s.id==currentShop)
+
+if(!shop) return
+
+let currency=shop.currency
+
+let totalSales=0
+let totalProfit=0
+
+shop.records.forEach(r=>{
+
+totalSales+=r.sales||0
+totalProfit+=r.profit||0
+
+})
+
+window.summaryCache=
+
+`Total Sales: ${currency} ${totalSales}<br>
+Total Profit: ${currency} ${totalProfit}<br><br>
+
+Owner 40%: ${currency} ${(totalProfit*0.4).toFixed(2)}<br>
+Capital 30%: ${currency} ${(totalProfit*0.3).toFixed(2)}<br>
+Savings 20%: ${currency} ${(totalProfit*0.2).toFixed(2)}<br>
+Emergency 10%: ${currency} ${(totalProfit*0.1).toFixed(2)}`
+
+}
+
+function showSummary(){
+
+document.getElementById("summaryContent").innerHTML=window.summaryCache
+
+document.getElementById("summaryModal").style.display="flex"
+
+}
+
+function closeSummary(){
+
+document.getElementById("summaryModal").style.display="none"
+
+}
+
+/* WHATSAPP */
+
 function shareWhatsApp(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop) return;
-  let text=`Sales Performance Summary for ${shop.name}\n\n`+window.summaryCache.replace(/<br>/g,'\n');
-  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+
+let shop=shops.find(s=>s.id==currentShop)
+
+if(!shop) return
+
+let text=`Sales Summary for ${shop.name}\n\n`+window.summaryCache.replace(/<br>/g,"\n")
+
+window.open("https://wa.me/?text="+encodeURIComponent(text),"_blank")
+
 }
 
-/* PDF DOWNLOAD */
+/* PDF */
+
 function downloadPDF(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop) return;
-  const { jsPDF } = window.jspdf;
-  let doc = new jsPDF();
-  doc.text(`Sales Performance Summary - ${shop.name}`,10,10);
-  doc.text(window.summaryCache.replace(/<br>/g,'\n'),10,20);
-  doc.save(`${shop.name}-summary.pdf`);
+
+let shop=shops.find(s=>s.id==currentShop)
+
+if(!shop) return
+
+const { jsPDF } = window.jspdf
+
+let doc=new jsPDF()
+
+doc.text(`Sales Summary - ${shop.name}`,10,10)
+
+doc.text(window.summaryCache.replace(/<br>/g,"\n"),10,20)
+
+doc.save(`${shop.name}-summary.pdf`)
+
 }
 
-/* TREND */
-function generateTrendBackground(){
-  let shop=shops.find(s=>s.id==currentShop);
-  if(!shop || shop.records.length<3){window.trendCache="Not enough data";return;}
-  let last3=shop.records.slice(-3);
-  let p1=last3[0].profit||0,p2=last3[1].profit||0,p3=last3[2].profit||0;
-  if(p3>p2 && p2>p1){window.trendCache="Profit is growing";}
-  else if(p3<p2 && p2<p1){window.trendCache="Warning: Profit is declining";}
-  else{window.trendCache="Profit is unstable";}
-}
-function showTrendWarning(){document.getElementById("trendContent").innerHTML=window.trendCache;document.getElementById("trendModal").style.display="flex";}
-function closeTrend(){document.getElementById("trendModal").style.display="none";}
+loadShops()
 
-/* RANKING */
-function generateRankingBackground(){
-  let leaderboard=[];
-  shops.forEach(s=>{let profit=s.records.reduce((a,b)=>a+(b.profit||0),0);leaderboard.push({name:s.name,profit:profit});});
-  leaderboard.sort((a,b)=>b.profit-a.profit);
-  window.rankingCache=leaderboard;
-}
-function showRanking(){
-  let html="";
-  window.rankingCache.forEach((r,i)=>{html+=(i+1)+". "+r.name+" — Ksh "+r.profit.toFixed(2)+"<br><hr>";});
-  document.getElementById("rankingContent").innerHTML=html;
-  document.getElementById("rankingModal").style.display="flex";
-}
-function closeRanking(){document.getElementById("rankingModal").style.display="none";}
-
-/* BACKUP */
-function backupData(){let blob=new Blob([JSON.stringify(shops,null,2)]);let a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="backup.json";a.click();}
-function restoreData(e){let file=e.target.files[0];if(!file) return;let reader=new FileReader();reader.onload=()=>{shops=JSON.parse(reader.result);saveLocal();loadShops();};reader.readAsText(file);}
-
-/* AUTO CLEAN LOCAL DATA (30 DAYS) */
-function autoCleanLocalData() {
-  const now = Date.now();
-  const monthMs = 30*24*60*60*1000;
-  shops.forEach(shop => {
-    shop.records = shop.records.filter(r => (now - new Date(r.date).getTime()) < monthMs);
-  });
-  saveLocal();
-  renderDashboard();
-}
-
-/* CLOUD */
-async function cloudBackup(){
-  if(!currentUserEmail) return;
-  await db.collection("salesPerformance").doc(currentUserEmail).set({
-    shops: shops, // full data including older records
-    updated: Date.now()
-  });
-}
-async function cloudSync(){
-  if(!currentUserEmail) return;
-  let snap=await db.collection("salesPerformance").doc(currentUserEmail).get();
-  if(snap.exists){
-    shops=snap.data().shops||[];
-    saveLocal();
-    loadShops();
-  }
-}
-
-/* AUTO SAVE + CLEAN + CLOUD SYNC EVERY 10 MIN */
-setInterval(()=>{
-  cloudBackup();
-  autoCleanLocalData();
-},10*60*1000);
-
-loadShops();
 </script>
 
 </body>
